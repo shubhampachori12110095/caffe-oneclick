@@ -1,6 +1,7 @@
 #深度学习入门进阶指南
+####包含一键式训练评估集成开发环境
 ####Last Update 2016.10.29
-  
+
 [![icon]](http://www.tendyron.com/)  
 [icon]: http://www.tendyron.com/images/logo.gif
 ***
@@ -17,9 +18,6 @@
 
 本人深知集成式开发、全流程验证的重要性，不同于网上博客分散式只给出几个代码片段的做法，其中的caffe-oneclick完成了从数据预处理、训练、测试以及评估的所有代码，并且以工程化的形式。考虑到大多数使用过Windows的现实状况，还提供了VS2013的解决方案，您只需要在按环境搭建所示的方法搭建好caffe环境后便可一键式运行，省去了各种配置的烦恼。
 
-本文的资料来自于网上各位大神的无私奉献，版权归原作者所有。如果不经意间侵犯了您的正当权益，请联系我删除。
-
-
 #环境搭建
 
 [如何快糙好猛地在Windows下编译CAFFE并使用其matlab和python接口](http://blog.csdn.net/happynear/article/details/45372231)
@@ -32,11 +30,13 @@
 
 ##实现解析
 
+[图文并解caffe源码](http://blog.csdn.net/mounty_fsc/article/category/6136645)
+
 [caffe源码解析](http://blog.csdn.net/qq_16055159)
 
 [caffe代码阅读](http://blog.csdn.net/xizero00/article/category/5619855/)
 
-[从零开始山寨Caffe](http://www.cnblogs.com/neopenx/)
+[从零开始山寨Caffe  caffe为什么这么设计？](http://www.cnblogs.com/neopenx/)
 
 [Caffe代码导读 21天实战caffe作者博客](http://blog.csdn.net/kkk584520/article/category/2620891/2)
 
@@ -92,5 +92,10 @@ MXNet 深度学习交流群：489170253
 以上都是外用工具，作为一名合格的深度学习算法工程师，最重要的还是修炼内功心法，参考
 
 [机器学习路线图](http://blog.csdn.net/longxinchen_ml/article/details/50749614)
+
+[深度学习与计算机视觉 cs231的中文翻译](http://blog.csdn.net/longxinchen_ml/article/category/5969883)
+
+
+本文的资料来自于网上各位大神的无私奉献，版权归原作者所有。如果不经意间侵犯了您的正当权益，请联系我删除。
 
 如果觉得能帮到您，请记得点右上角的star。
