@@ -83,6 +83,11 @@ caffe-oneclick以车牌识别开源项目EasyPR中车牌字符识别为例，提
 
 #技术交流QQ群
 
+OpenDL专用群:238787044
+
+[![扫码加群]](<a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=c0f6c0fc9909ac91d8edf5bb6bf1a86a612c6ca9d43747d6429c2480b8019c7b"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="OpenDL" title="OpenDL"></a>)
+[扫码加群]:figures/OpenDL.png
+
 Caffe 深度学习交流群：534492004
 
 MXNet 深度学习交流群：489170253
