@@ -5,8 +5,9 @@ caffe一键式训练评估集成开发环境
 
 #### Last Update 2017.05.06
 
-[![icon]](http://www.tendyron.com/)  
-[icon]: http://www.tendyron.com/images/logo.gif
+<p align="left">
+    <img src="http://www.tendyron.com/images/logo.gif">
+</p>
 
 ## 概述
 
@@ -55,7 +56,9 @@ Train.bat训练模型使用的是如下命令：
 
 evaluation.bat用来对data文件下下的数据进行评估，它会得出迭代次数为10000时模型的错误率，并且打印出误识别图片对应的真值和预测值，并把相应数据保存在error文件夹下，命名格式为字符文件夹/图片在文件夹内的序号_真值类别_预测类别(以0/190_0_4.jpg为例，代表0/190.jpg被误识为4)，这些错误识别的样本需要仔细分析，不断调试参数，以获得期望的结果。
 
-![评估结果](figures/error.png)
+<p align="center">
+    <img src="figures/error.png", width="600">
+</p>
 
 不难看出，本项目提供的训练好的[模型文件](trainedmodels/platerecognition_iter_10000.caffemodel)错误率低于0.6%,这就意味着其达到了99.4%以上的准确率。
 
@@ -78,7 +81,9 @@ evaluation.bat用来对data文件下下的数据进行评估，它会得出迭�
 ```
 "../Build/x64/Release/classification" "modeldef/deploy.prototxt" "trainedmodels/platerecognition_iter_1000.caffemodel" "modeldef/mean.binaryproto" "modeldef/labels.txt" "data/0/4-3.jpg"
 ```
-![分类结果](figures/classification.png)
+<p align="center">
+    <img src="figures/classification.png", width="600">
+</p>
 
 其返回了最高的5个类别的相似度，不难看出训练的网络对于data/0/0.jpg有高达93%的概率认为其属于0这个字符，结果还是非常理想的
 
@@ -130,8 +135,7 @@ evaluation.bat用来对data文件下下的数据进行评估，它会得出迭�
 
 * 本项目专用群:238787044
 
-[![扫码加群]](<a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=c0f6c0fc9909ac91d8edf5bb6bf1a86a612c6ca9d43747d6429c2480b8019c7b"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="OpenDL" title="OpenDL"></a>)
-[扫码加群]:http://i.imgur.com/7cjLpED.png
+<img src="http://i.imgur.com/7cjLpED.png", width="200">
 
 * Caffe 深度学习交流群：534492004
 
@@ -145,4 +149,4 @@ evaluation.bat用来对data文件下下的数据进行评估，它会得出迭�
 
 如果此项目对您有用，请在能力所及范围支持开源事业的发展，扫码微信打赏
 
-![](http://i.imgur.com/fkA4iPX.jpg)
+<img src="http://i.imgur.com/fkA4iPX.jpg", width="200">
