@@ -1,6 +1,6 @@
-#深度学习入门进阶指南
-####包含一键式训练评估集成开发环境
-####Last Update 2016.10.29
+#caffe一键式训练评估集成开发环境
+####深度学习入门进阶指南
+####Last Update 2017.05.06
 
 [![icon]](http://www.tendyron.com/)  
 [icon]: http://www.tendyron.com/images/logo.gif
@@ -8,27 +8,89 @@
 
 #概述
 
-深度学习大火，将各个数据集的state of the art不断地刷新，在解决图像分类、语音识别等问题上获得了已知的最优结果，该系列算法越来越受到学术界和工业界的重视。何为深度学习？一个直观的解释是如果一个机器学习算法在建模的过程中使用了多层的自动特征表示，则该机器学习算法可以称之为深度学习算法，也就是该机器学习算法可以自动地计算特征的特征表示。
+深度学习大火以来，各类教程充斥网络、博客等，甚至各类培训也屡见不鲜，但无不例外均存在一个问题就是各个环节缺乏联系，没有一个统一的开发环境去完成整个流程。这个项目的目的就是提供一个集成式开发环境，大大提升开发部署的效率。
 
-当前各类深度学习算法层出不穷，开源的工具库更是多如牛毛。选择太多比没有选择更令人痛苦。我们要感谢这些库的作者们，他们为领域的发展做出了卓越的贡献。这些工具库从使用的语言来分，大致可分为c++类、matlab类、python类和lua类。其中C++类的代表是caffe，难能可贵的是其还配有matlab和python接口，并且可以使用GPU加速，还提供预先训练好的模型，奠定了其在深度学习的领先地位。matlab类的代表是牛津的matconvnet，有GPU加速，上手快，还有精心准备的教程。python类的代表是theano、Keras和pylearn2，有UFLDL的强力支撑，想必一呼百应。lua类的代表是toch7，已经可以和caffe在CVPR2015上一较高下。
+使用深度学习完成一个特定的任务比如说字符识别、人脸识别等大致可以分为数据准备、定义模型、训练模型、评估模型和部署模型等几个步骤。
 
-但是，我们更应该看到他们的不足。虽然上述这些库都可以跨平台使用，但是配置的难度缺差异很大。caffe依赖很多的第三方库，导致其安装十分繁琐，令很多初学者望而却步。欣喜的是电子科大的王峰博士提供了[一键安装式的教程](如何快糙好猛地在Windows下编译CAFFE并使用其matlab和python接口)，大大方便了caffe的搭建，而华中科大的欧新宇老师提供的[caffe在ubuntu上的安装教程](http://ouxinyu.github.io/Blogs/20151108001.html)也让我信手拈来。theano在windows使用上的坑很多，之前使用python(x,y)，怎么也编译不过theano，无奈放弃了使用theano这么简洁优雅的工具，甚是可惜。后来才发现要使用Anaconda，而且由于2.1后的版本取消了对MinGW的支持，只能选择2.1的版本。这些看似微不足道的细节使我们陷入泥沼，浪费了很多不必要的时间和精力。
+1.数据准备
 
-一个很自然的想法就是如果有一个能给新手足够的参考资料，那么将会大大降低深度学习的门槛，使更多的研究者享受深度学习带来的福利。经过本人近两年的亲身实践，去伪存真，终得大成之道，此版删除了谬误及不当之处。
+首先收集要任务相关的数据，这里准备了一个车牌字符数据（仅包含0-9共10个数字），直接解压[data.rar](data.rar)到当前文件夹即可，格式如下图所示，每类图片对应一个文件夹，放到一个data文件夹下，注意格式一致型（都为.jpg或.png文件），仔细筛查，不要含有其他的非图片文件在里面，你也可以用自己的数据替换这些车牌字符数据。
 
-本人深知集成式开发、全流程验证的重要性，不同于网上博客分散式只给出几个代码片段的做法，其中的caffe-oneclick完成了从数据预处理、训练、测试以及评估的所有代码，并且以工程化的形式。考虑到大多数使用过Windows的现实状况，还提供了VS2013的解决方案，您只需要在按环境搭建所示的方法搭建好caffe环境后便可一键式运行，省去了各种配置的烦恼。
+![图片整理方式](figures/data.png)
+
+caffe使用了lmdb内存数据库等来加快训练时读取数据的速度，为此，caffe自带的tools里提供了一个工具（可由convert_imageset.cpp编译生成），它的输入是图片路径和标签对组成的文件，每次都手动生成这个文件不胜其烦。
+
+我们希望是自动化的从文件夹读取的功能，因此，本项目通过preprocess/preprocess.py来获取如下图所示的文件夹下所有的文件路径以及对应的文件标签的功能，它输出训练和验证集preprocess/train.txt和preprocess/val.txt以及标签映射文件modef/labels.txt
+
+python preprocess/preprocess.py
+然后用以下代码转换成lmdb数据库
+
+```
+del "lmdb/train_lmdb\*.*" /f /s /Y
+del "lmdb/val_lmdb\*.*" /f /s /Y
+rd /s /q "lmdb/train_lmdb"
+rd /s /q "lmdb/val_lmdb"
+
+"../Build/x64/Release/convert_imageset" --resize_height=20 --resize_width=20 --shuffle "" "preprocess/train.txt" "lmdb/train_lmdb"
+
+echo "Creating val lmdb..."
+"../Build/x64/Release/convert_imageset" --resize_height=20 --resize_width=20 --shuffle "" "preprocess/val.txt" "lmdb/val_lmdb"
+```
+
+2.定义模型
+
+训练定义文件位于modeldef下的plate_train_test.prototxt，部署文件在deploy.prototxt，你可以通过[网络结构可视化](http://ethereon.github.io/netscope/#/editor)对这些网络进行可视化，以便更清晰的理解他们的含义。
+
+3.训练模型
+
+Train.bat训练模型使用的是如下命令：
+
+```
+"../Build/x64/Release/caffe.exe" train --solver=modeldef/solver.prototxt
+```
+
+4.评估模型
+
+evaluation.bat用来对data文件下下的数据进行评估，它会得出迭代次数为10000时模型的错误率，并且打印出误识别图片对应的真值和预测值，并把相应数据保存在error文件夹下，命名格式为字符文件夹/图片在文件夹内的序号_真值类别_预测类别(以0/190_0_4.jpg为例，代表0/190.jpg被误识为4)，这些错误识别的样本需要仔细分析，不断调试参数，以获得期望的结果。
+
+![评估结果](figures/error.png)
+
+不难看出，本项目提供的训练好的[模型文件](trainedmodels/platerecognition_iter_10000.caffemodel)错误率低于0.6%,这就意味着其达到了99.4%以上的准确率。
+
+```
+以上4个步骤可以通过一个脚本一键式完成
+本项目提供了oneclick.bat来完成一键式生成数据、训练和评估模型，大大提升了开发效率。
+```
+
+5.部署模型
+
+由于速度原因，实际中多使用C++而不是python进行部署，因此本项目在cpp文件夹下提供了evaluationcpp工程，它使用单例模式来防止每次预测都加载模型，只需使用如下代码即可在你的项目中一行代码使用CNN，此外，该项目也提供了对模型进行评估的功能。
+
+```
+ cv::Mat img=cv::imread("imagepath.jpg");
+ string result=CnnPredictor::getInstance()->predict(img);
+```
+
+当然，你也可以运行calssification.bat来调用caffe自身进行分类识别
+
+```
+"../Build/x64/Release/classification" "modeldef/deploy.prototxt" "trainedmodels/platerecognition_iter_1000.caffemodel" "modeldef/mean.binaryproto" "modeldef/labels.txt" "data/0/4-3.jpg"
+```
+![分类结果](figures/classification.png)
+
+其返回了最高的5个类别的相似度，不难看出训练的网络对于data/0/0.jpg有高达93%的概率认为其属于0这个字符，结果还是非常理想的
 
 #环境搭建
 
+[官方Caffe-windows 配置与示例运行](http://blog.csdn.net/guoyk1990/article/details/52909864)
+
+[Ubuntu16.04+cuda8.0+caffe安装教程](http://blog.csdn.net/autocyz/article/details/52299889)
+
 [如何快糙好猛地在Windows下编译CAFFE并使用其matlab和python接口](http://blog.csdn.net/happynear/article/details/45372231)
 
-[Caffe + Ubuntu 15.04(16.04) + CUDA 7.5(8) 新手安装配置指南](http://blog.csdn.net/shiorioxy/article/details/52652831)
-
-[mxnet训练自己的数据](https://github.com/imistyrain/mxnet-mr)
-
-[MatconvNet使用指南](https://github.com/imistyrain/MatConvNet-mr)
-
 ##实现解析
+
+[网络结构可视化](http://ethereon.github.io/netscope/#/editor)
 
 [图文并解caffe源码](http://blog.csdn.net/mounty_fsc/article/category/6136645)
 
@@ -36,11 +98,9 @@
 
 [caffe代码阅读](http://blog.csdn.net/xizero00/article/category/5619855/)
 
-[从零开始山寨Caffe  caffe为什么这么设计？](http://www.cnblogs.com/neopenx/)
+[从零开始山寨Caffe caffe为什么这么设计？](http://www.cnblogs.com/neopenx/)
 
 [Caffe代码导读 21天实战caffe作者博客](http://blog.csdn.net/kkk584520/article/category/2620891/2)
-
-[网络结构可视化 在线 ](http://ethereon.github.io/netscope/#/editor)
 
 [CNN卷积神经网络推导和实现](http://blog.csdn.net/zouxy09/article/details/9993371)
 
@@ -64,43 +124,23 @@
 
 [caffe特征可视化的代码样例](http://blog.csdn.net/lingerlanlan/article/details/37593837)
 
-#caffe-oneclick使用
-
-caffe-oneclick以车牌识别开源项目EasyPR中车牌字符识别为例，提供了一键式的开发环境，在下载完成后需要将这个文件夹拷贝到安装的caffe-windows-master目录下，与其中的bin、python等文件夹保持在同一级目录。
-
-然后右键点击其中的的data.rar，解压到当前目录，点击one-click即可一键式运行，其中的classification.bat用于验证识别一张图片的正确性
-
-![分类结果](figures/classification.png)
-
-其返回了最高的5个类别的相似度，不难看出训练的网络对于data/0/0.jpg有高达93%的概率认为其属于0这个字符，是完全正确的。
-
-每次只运行一张测试图片的做法低效之致，为此提供了evaluation.bat系统的评估一个文件夹下图片识别的准确率，并将错误分类的结果保存在error文件夹下，命名格式为字符文件夹/图片在文件夹内的序号_真值类别_预测类别(以0/17_0_J.jpg为例，代表0/17.jpg被误识为J)，这些错误识别的样本需要仔细分析，不断调试参数，以获得期望的结果。
-
-如果需要在自己的数据集上进行测试，请把收集好的图片分门别类放到各自的文件夹下，然后替换掉data下的这些数据：
-![图片整理方式](figures/data.png)
-
-网络定义文件在modeldef文件夹下，替换成自己的prototxt文件即可。
-
 #技术交流QQ群
 
-OpenDL专用群:238787044
+本项目专用群:238787044
 
 [![扫码加群]](<a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=c0f6c0fc9909ac91d8edf5bb6bf1a86a612c6ca9d43747d6429c2480b8019c7b"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="OpenDL" title="OpenDL"></a>)
-[扫码加群]:figures/OpenDL.png
+[扫码加群]:http://i.imgur.com/7cjLpED.png
 
 Caffe 深度学习交流群：534492004
 
 MXNet 深度学习交流群：489170253
 
-#Last
+参考：
 
-以上都是外用工具，作为一名合格的深度学习算法工程师，最重要的还是修炼内功心法，参考
+[mxnet 训练自己的数据](https://github.com/imistyrain/mxnet-mr)
 
-[机器学习路线图](http://blog.csdn.net/longxinchen_ml/article/details/50749614)
+[MatconvNet 训练自己的数据](https://github.com/imistyrain/MatConvNet-mr)
 
-[深度学习与计算机视觉 cs231的中文翻译](http://blog.csdn.net/longxinchen_ml/article/category/5969883)
+如果此项目对您有用，请在能力所及范围支持开源事业的发展，多谢
 
-
-本文的资料来自于网上各位大神的无私奉献，版权归原作者所有。如果不经意间侵犯了您的正当权益，请联系我删除。
-
-如果觉得能帮到您，请记得点右上角的star。
+![](http://i.imgur.com/fkA4iPX.jpg)
