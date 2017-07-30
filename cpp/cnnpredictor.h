@@ -8,7 +8,7 @@
 #include <string>
 #include <utility>
 #include <vector>
-
+using namespace std;
 const string caffeplatedir = "../";
 const string model_file = caffeplatedir + "modeldef/deploy.prototxt";
 const string trained_file = caffeplatedir + "trainedmodels/platerecognition_iter_10000.caffemodel";

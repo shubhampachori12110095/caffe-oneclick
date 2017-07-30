@@ -1,0 +1,10 @@
+trainedmodels/
+alldata/
+data/
+error/
+lmdb/
+cpp/x64/
+x64/
+charfontdata.rar
+clean.bat
+

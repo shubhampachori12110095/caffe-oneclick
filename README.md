@@ -3,7 +3,7 @@ caffe一键式训练评估集成开发环境
 
 #### 深度学习入门进阶指南
 
-#### Last Update 2017.05.06
+#### Last Update 2017.07.23
 
 <p align="left">
     <img src="http://www.tendyron.com/images/logo.gif">
@@ -19,13 +19,13 @@ caffe一键式训练评估集成开发环境
 
 首先收集要任务相关的数据，这里准备了一个车牌字符数据（仅包含0-9共10个数字），直接解压[data.rar](data.rar)到当前文件夹即可，格式如下图所示，每类图片对应一个文件夹，放到一个data文件夹下，注意格式一致型（都为.jpg或.png文件），仔细筛查，不要含有其他的非图片文件在里面，你也可以用自己的数据替换这些车牌字符数据。
 
-![图片整理方式](figures/data.png)
+![图片整理方式](doc/data.png)
 
 caffe使用了lmdb内存数据库等来加快训练时读取数据的速度，为此，caffe自带的tools里提供了一个工具（可由convert_imageset.cpp编译生成），它的输入是图片路径和标签对组成的文件，每次都手动生成这个文件不胜其烦。
 
 我们希望是自动化的从文件夹读取的功能，因此，本项目通过preprocess/preprocess.py来获取如下图所示的文件夹下所有的文件路径以及对应的文件标签的功能，它输出训练和验证集preprocess/train.txt和preprocess/val.txt以及标签映射文件modef/labels.txt
 
-python preprocess/preprocess.py
+python util/preprocess.py
 然后用以下代码转换成lmdb数据库
 
 ```
@@ -34,10 +34,10 @@ del "lmdb/val_lmdb\*.*" /f /s /Y
 rd /s /q "lmdb/train_lmdb"
 rd /s /q "lmdb/val_lmdb"
 
-"../Build/x64/Release/convert_imageset" --resize_height=20 --resize_width=20 --shuffle "" "preprocess/train.txt" "lmdb/train_lmdb"
+"../build/tools/convert_imageset" --resize_height=20 --resize_width=20 --shuffle "" "preprocess/train.txt" "lmdb/train_lmdb"
 
 echo "Creating val lmdb..."
-"../Build/x64/Release/convert_imageset" --resize_height=20 --resize_width=20 --shuffle "" "preprocess/val.txt" "lmdb/val_lmdb"
+"../build/tools/convert_imageset" --resize_height=20 --resize_width=20 --shuffle "" "preprocess/val.txt" "lmdb/val_lmdb"
 ```
 
 ### 2.定义模型
@@ -49,7 +49,7 @@ echo "Creating val lmdb..."
 Train.bat训练模型使用的是如下命令：
 
 ```
-"../Build/x64/Release/caffe.exe" train --solver=modeldef/solver.prototxt
+"../build/tools/caffe" train --solver=modeldef/solver.prototxt
 ```
 
 ### 4.评估模型
@@ -79,10 +79,10 @@ evaluation.bat用来对data文件下下的数据进行评估，它会得出迭�
 当然，你也可以运行calssification.bat来调用caffe自身进行分类识别
 
 ```
-"../Build/x64/Release/classification" "modeldef/deploy.prototxt" "trainedmodels/platerecognition_iter_1000.caffemodel" "modeldef/mean.binaryproto" "modeldef/labels.txt" "data/0/4-3.jpg"
+"../build/examples/cpp_classification/classification" "modeldef/deploy.prototxt" "trainedmodels/platerecognition_iter_1000.caffemodel" "modeldef/mean.binaryproto" "modeldef/labels.txt" "data/0/4-3.jpg"
 ```
 <p align="center">
-    <img src="figures/classification.png", width="600">
+    <img src="doc/classification.png", width="600">
 </p>
 
 其返回了最高的5个类别的相似度，不难看出训练的网络对于data/0/0.jpg有高达93%的概率认为其属于0这个字符，结果还是非常理想的

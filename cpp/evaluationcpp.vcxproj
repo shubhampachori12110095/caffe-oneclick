@@ -73,15 +73,15 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>D:\opencv3\build\include;D:\opensrc\EasyPR-1.5beta\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\opencv3\build\x64\vc12\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>D:\CNN\caffe-windows-master\bin;D:\opencv3\build\x64\vc12\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>E:\MachineLearning\caffe\caffe-windows-master\src;D:\opencv3\build\include;E:\MachineLearning\caffe\caffe-windows-master\include;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\MachineLearning\caffe\caffe-windows-master\bin;D:\opencv3\build\x64\vc12\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\opencv3\build\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\CNN\caffe-windows-master\bin;D:\opencv3\build\x64\vc12\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

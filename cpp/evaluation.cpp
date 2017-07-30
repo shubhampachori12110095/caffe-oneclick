@@ -8,8 +8,7 @@ const string platedatadir = caffeplatedir+"data";
 
 void cleardir(const string dir)
 {
-	vector<string>files;
-	getAllFilesinDir(dir, files);
+	vector<string>files=getAllFilesinDir(dir);
 	for (int i = 0; i < files.size(); i++)
 	{
 		string filepath = dir + "/" + files[i];
@@ -19,8 +18,7 @@ void cleardir(const string dir)
 
 void clearerror(const string dir)
 {
-	vector<string>subdirs;
-	getAllSubdirs(dir, subdirs);
+	vector<string>subdirs=getAllSubdirs(dir);
 	for (int i = 0; i < subdirs.size(); i++)
 	{
 		string subdir = dir + "/" + subdirs[i];
@@ -39,17 +37,16 @@ int evaluation()
 		_mkdir(errordir.c_str());
 	}
 	clearerror(errordir);
-	vector<string>subdirs;
-	getAllSubdirs(platedatadir, subdirs);
+	vector<string>subdirs=getAllSubdirs(platedatadir);
 	for (auto sub : subdirs)
 	{
 		string subdir = platedatadir + "/" + sub;
-		vector<string>files;
-		getAllFilesinDir(subdir, files);
+		vector<string>files=getAllFilesinDir(subdir);
 		for (auto file : files)
 		{
 			string fileapth = subdir + "/" + file;
 			cv::Mat img = cv::imread(fileapth, 0);
+			img.convertTo(img, CV_32FC3);
 			auto ret = split(CnnPredictor::getInstance()->predict(img), " ")[1];
 			if (ret == sub)
 				rightcount++;

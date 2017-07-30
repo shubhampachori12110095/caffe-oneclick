@@ -10,7 +10,7 @@ layer {
   data_param {
     source: "lmdb/train_lmdb"
     backend: LMDB
-    batch_size: 500
+    batch_size: 50
   }
   include: { phase: TRAIN }
 }
@@ -25,7 +25,7 @@ layer {
   data_param {
     source: "lmdb/val_lmdb"
     backend: LMDB
-    batch_size: 500
+    batch_size: 100
   }
   include: { phase: TEST }
 }
