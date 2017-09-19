@@ -3,7 +3,7 @@ caffe一键式训练评估集成开发环境
 
 #### 深度学习入门进阶指南
 
-#### Last Update 2017.07.23
+#### Last Update 2017.09.19
 
 <p align="left">
     <img src="http://www.tendyron.com/images/logo.gif">
@@ -150,6 +150,6 @@ evaluation.bat用来对data文件下下的数据进行评估，它会得出迭�
 * [MatconvNet 训练自己的数据](https://github.com/imistyrain/MatConvNet-mr)
 
 如果此项目对您有用，请在能力所及范围支持开源事业的发展，扫码微信打赏
-<p align="left">
-<img src="http://i.imgur.com/fkA4iPX.jpg", width="200">
-</p>
+<center  class="half">
+<img src="http://i.imgur.com/fkA4iPX.jpg", width="200"><img src="http://i.imgur.com/tYLAMg3.jpg", width="200">
+</center>

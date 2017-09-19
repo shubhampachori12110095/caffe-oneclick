@@ -1,10 +1,60 @@
-#define REG_USE_CNN 1
-#pragma warning(disable:4996)
+#include "mrdir.h"
 #include "mrutil.h"
-#include "cnnpredictor.h"
+#include "mropencv.h"
+using namespace std;
 
-const string errordir = caffeplatedir + "error";
-const string platedatadir = caffeplatedir+"data";
+const string caffeplatedir = "../";
+const string errordir = caffeplatedir + "/error";
+const string platedatadir = caffeplatedir + "/data";
+const string model_file = caffeplatedir + "/modeldef/deploy.prototxt";
+const string trained_file = caffeplatedir + "/plate996.caffemodel";
+const string mean_file = caffeplatedir + "/modeldef/mean.binaryproto";
+
+class CLenetClassifier
+{
+public:
+    static CLenetClassifier*getInstance()
+    {
+        static CLenetClassifier instance;
+        return &instance;
+    }
+    std::pair<int, double>predict(const cv::Mat &img);
+    bool load(String modelTxt = model_file, String modelBin = trained_file);
+private:
+    Net net;
+    bool bloaded = false;
+    CLenetClassifier() {
+    }
+};
+
+std::pair<int, double>CLenetClassifier::predict(const cv::Mat &img)
+{
+    std::pair<int, double>p;
+    if (!bloaded)
+    {
+        load();
+    }
+    else
+    {
+        cv::Mat inputBlob = blobFromImage(img, 1, Size(20, 20));
+        cv::Mat prob;
+        net.setInput(inputBlob, "data");
+        prob = net.forward("prob");
+        cv::Mat probMat = prob.reshape(1, 1);
+        cv::Point classNumber;
+        cv::minMaxLoc(probMat, NULL, &p.second, NULL, &classNumber);
+        p.first = classNumber.x;
+    }
+
+    return p;
+}
+
+bool CLenetClassifier::load(String modelTxt, String modelBin)
+{
+    net = dnn::readNetFromCaffe(modelTxt, modelBin);
+    bloaded = !net.empty();
+    return bloaded;
+}
 
 void cleardir(const string dir)
 {
@@ -31,10 +81,10 @@ int evaluation()
 	string line;
 	string label;
 	int rightcount = 0, errorcount = 0, total = 0;	
-	if (!exist(errordir.c_str()))
+	if (!EXISTS(errordir.c_str()))
 	{
 		cout << "Error dir not exist" << endl;
-		_mkdir(errordir.c_str());
+		MKDIR(errordir.c_str());
 	}
 	clearerror(errordir);
 	vector<string>subdirs=getAllSubdirs(platedatadir);
@@ -45,10 +95,9 @@ int evaluation()
 		for (auto file : files)
 		{
 			string fileapth = subdir + "/" + file;
-			cv::Mat img = cv::imread(fileapth, 0);
-			img.convertTo(img, CV_32FC3);
-			auto ret = split(CnnPredictor::getInstance()->predict(img), " ")[1];
-			if (ret == sub)
+			cv::Mat img = cv::imread(fileapth);
+			auto ret=CLenetClassifier::getInstance()->predict(img).first;
+			if (ret == string2int(sub))
 				rightcount++;
 			else
 			{
@@ -59,8 +108,8 @@ int evaluation()
 				{
 					_mkdir(errorlabeldir.c_str());
 				}
-				string errorfilepath = errorlabeldir + "/" + file.substr(0,file.size()-4) + "_" + sub + "_" + ret + ".png";
-				cout << sub + "/" + file.substr(0, file.size() - 4) + ":" + ret << endl;
+				string errorfilepath = errorlabeldir + "/" + file.substr(0,file.size()-4) + "_" + sub + "_" + int2string(ret) + ".png";
+				cout << sub + "/" + file.substr(0, file.size() - 4) + ":" + int2string(ret) << endl;
 				imshow("error", img);
 				imwrite(errorfilepath, img);
 				cv::waitKey(1);
@@ -73,14 +122,38 @@ int evaluation()
 	return 0;
 }
 
+int testimg(const std::string imgpath = "img/0.jpg")
+{
+    cv::Mat img = imread(imgpath);
+    TickMeter tm;
+    tm.start();
+    auto p = CLenetClassifier::getInstance()->predict(img);
+    tm.stop();
+    std::cout << p.first << std::endl;// " " << p.second << endl;
+    std::cout << tm.getTimeMilli() << "ms" << std::endl;
+    return 0;
+}
+
+int testdir(const std::string dir = "img")
+{
+    auto files = getAllFilesinDir(dir);
+    for (int i = 0; i < files.size(); i++)
+    {
+        std::string imgpath = dir + "/" + files[i];
+        std::cout << files[i] << ":";
+        testimg(imgpath);
+    }
+    return 0;
+}
+
 int main(int argc,char*argv[])
 {
 	if (argc==1)
 		evaluation();
 	else
 	{
-		cv::Mat img = cv::imread(argv[1]);
-		cout << CnnPredictor::getInstance()->predict(img) << endl;
+        testimg();
+        testdir();
 	}
 	return 0;
 }
