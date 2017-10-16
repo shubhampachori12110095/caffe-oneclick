@@ -1,5 +1,5 @@
 @echo off
-set eval_iter=8000
+set eval_iter=10000
 
 :eval
 cd util
