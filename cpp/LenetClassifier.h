@@ -20,8 +20,9 @@ public:
 	std::pair<int, double>predict(const cv::Mat &img);
 	bool load(cv::String modelTxt = model_file, cv::String modelBin = trained_file);
 private:
-	Net net;
 	bool bloaded = false;
+    Net _net;
+    cv::Scalar _mean;
 	CLenetClassifier() {
 	}
 };

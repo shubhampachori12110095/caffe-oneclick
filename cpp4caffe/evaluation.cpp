@@ -44,8 +44,7 @@ int evaluation()
 		for (auto file : files)
 		{
 			string fileapth = subdir + "/" + file;
-			cv::Mat img = cv::imread(fileapth, 0);
-			img.convertTo(img, CV_32FC3);
+			cv::Mat img = cv::imread(fileapth);
 			auto ret = split(CnnPredictor::getInstance()->predict(img), " ")[1];
 			if (ret == sub)
 				rightcount++;

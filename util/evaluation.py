@@ -20,10 +20,12 @@ def loadmean(meanprotopath):
 
 def getclassifier(args):
     channel_swap=[2,1,0]
-    raw_scale=255.0
+    raw_scale=255
     pretrainedmodel=args.weights_prefix+str(args.iter)+".caffemodel"
     classifier = caffe.Classifier(args.modeldef, pretrainedmodel,image_dims=args.image_dims,mean=loadmean(args.meanfile).mean(1).mean(1),
-                                  raw_scale=raw_scale,channel_swap=channel_swap)
+                                  raw_scale=raw_scale
+                                  ,channel_swap=channel_swap
+                                  )
     caffe.set_mode_gpu()
     return classifier
 

@@ -5,6 +5,7 @@
 using namespace std;
 const string errordir = caffeplatedir + "/error";
 const string platedatadir = caffeplatedir + "/data";
+
 void cleardir(const string dir)
 {
 	vector<string>files=getAllFilesinDir(dir);
@@ -17,12 +18,15 @@ void cleardir(const string dir)
 
 void clearerror(const string dir)
 {
+    cout << "clearing" << dir << endl;
 	vector<string>subdirs=getAllSubdirs(dir);
 	for (int i = 0; i < subdirs.size(); i++)
 	{
 		string subdir = dir + "/" + subdirs[i];
+        cout << subdirs[i]<<endl;
 		cleardir(subdir);
 	}
+    cout << "clearing done"<< endl;
 }
 
 int evaluation()
@@ -50,15 +54,15 @@ int evaluation()
 				rightcount++;
 			else
 			{
+                cout << sub + "/" + file.substr(0, file.size() - 4) + ":" + int2string(ret) << endl;
 				errorcount++;
 				string errorlabeldir = errordir;
 				errorlabeldir = errorlabeldir + "/" + sub;
-				if (!exist(errorlabeldir.c_str()))
+				if (!EXISTS(errorlabeldir.c_str()))
 				{
-					_mkdir(errorlabeldir.c_str());
+					MKDIR(errorlabeldir.c_str());
 				}
 				string errorfilepath = errorlabeldir + "/" + file.substr(0,file.size()-4) + "_" + sub + "_" + int2string(ret) + ".png";
-				cout << sub + "/" + file.substr(0, file.size() - 4) + ":" + int2string(ret) << endl;
 				imshow("error", img);
 				imwrite(errorfilepath, img);
 				cv::waitKey(1);
