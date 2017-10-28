@@ -3,17 +3,43 @@ caffe一键式训练评估集成开发环境
 
 #### 深度学习入门进阶指南
 
-#### Last Update 2017.09.19
-
-<p align="left">
-    <img src="http://www.tendyron.com/images/logo.gif">
-</p>
+#### Last Update 2017.10.29
 
 ## 概述
 
-深度学习大火以来，各类教程充斥网络、博客等，甚至各类培训也屡见不鲜，但无不例外均存在一个问题就是各个环节缺乏联系，没有一个统一的开发环境去完成整个流程。这个项目的目的就是提供一个集成式开发环境，大大提升开发部署的效率。
+本项目提供一个集成式开发环境，在配好caffe环境的前提下，只需将准备好的图片放入data目录下，便可以一键生成lmdb数据文件、均值文件、标注文件和测试评估模型、找出错误样本、部署模型等所有的操作，更难能可贵的是它是跨平台的，可以无缝的在Windos和Linux间切换。
 
 使用深度学习完成一个特定的任务比如说字符识别、人脸识别等大致可以分为数据准备、定义模型、训练模型、评估模型和部署模型等几个步骤。
+
+### 配置caffe
+
+现在配置caffe十分方便，仅需几行命令即可搞定,确保安装了所需的依赖,这里仅摘录最关键的部分，其余的详细内容可参见参考链接.
+
+#### Windows
+
+	::为了减少日后不必要的麻烦，建议VS2015,Cuda8.0,cudnn5.1及以上,python2.7
+	git clone https://github.com/BVLC/caffe
+	cd caffe
+	git checkout windows
+	scripts\build_win.cmd
+
+#### Linux
+
+	#安装依赖库
+	sudo apt-get build-essential
+	sudo apt-get install -y libprotobuf-dev libleveldb-dev libsnappy-dev libopencv-dev libhdf5-dev protobuf-compiler
+	sudo apt-get install -y --no-install-recommends libboost-all-dev
+	sudo apt-get install -y libatlas-base-dev
+	sudo apt-get install -y libgflags-dev libgoogle-glog-dev liblmdb-dev
+	sudo apt-get install -y wget unzip
+	sudo apt-get install -y gfortran
+	#从源码安装
+    git clone https://github.com/BVLC/caffe
+	cd caffe
+	mkdir build
+	cd build
+	cmake ..
+	make -j20
 
 ### 1.数据准备
 
@@ -56,11 +82,7 @@ Train.bat训练模型使用的是如下命令：
 
 evaluation.bat用来对data文件下下的数据进行评估，它会得出迭代次数为10000时模型的错误率，并且打印出误识别图片对应的真值和预测值，并把相应数据保存在error文件夹下，命名格式为字符文件夹/图片在文件夹内的序号_真值类别_预测类别(以0/190_0_4.jpg为例，代表0/190.jpg被误识为4)，这些错误识别的样本需要仔细分析，不断调试参数，以获得期望的结果。
 
-<p align="center">
-    <img src="figures/error.png", width="600">
-</p>
-
-不难看出，本项目提供的训练好的[模型文件](trainedmodels/platerecognition_iter_10000.caffemodel)错误率低于0.6%,这就意味着其达到了99.4%以上的准确率。
+本项目提供了一个训练好的[模型文件](plate996.caffemodel)，其错误率低于0.1%,这就意味着其达到了99.9%以上的准确率。
 
 ```
 以上4个步骤可以通过一个脚本一键式完成
@@ -139,17 +161,13 @@ evaluation.bat用来对data文件下下的数据进行评估，它会得出迭�
 <img src="http://i.imgur.com/7cjLpED.png", width="200">
 </p>
 
-* Caffe 深度学习交流群：534492004
-
-* MXNet 深度学习交流群：489170253
-
 ## 参考：
 
 * [mxnet 训练自己的数据](https://github.com/imistyrain/mxnet-mr)
 
 * [MatconvNet 训练自己的数据](https://github.com/imistyrain/MatConvNet-mr)
 
-如果此项目对您有用，请在能力所及范围支持开源事业的发展，扫码微信打赏
+扫码打赏支持开源事业
 <center  class="half">
-<img src="http://i.imgur.com/fkA4iPX.jpg", width="200"><img src="http://i.imgur.com/tYLAMg3.jpg", width="200">
+<img src="http://i.imgur.com/tYLAMg3.jpg", width="200">
 </center>

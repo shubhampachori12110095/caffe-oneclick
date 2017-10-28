@@ -8,7 +8,9 @@ std::pair<int, double>CLenetClassifier::predict(const cv::Mat &img)
 	}
 	else
 	{
-		cv::Mat inputBlob = blobFromImage(img, 1.0, cv::Size(20, 20),_mean);
+        cv::Mat input;
+        cv::resize(img, input, cv::Size(20, 20));
+        cv::Mat inputBlob = blobFromImage(input);// , 255.0f, cv::Size(20, 20), _mean, false);
 		cv::Mat prob;
         _net.setInput(inputBlob, "data");
 		prob = _net.forward("prob");
@@ -24,7 +26,7 @@ std::pair<int, double>CLenetClassifier::predict(const cv::Mat &img)
 bool CLenetClassifier::load(cv::String modelTxt, cv::String modelBin)
 {
 	_net = cv::dnn::readNetFromCaffe(modelTxt, modelBin);
-    _mean = cv::Scalar(66, 66, 66);
+//    _mean = cv::Scalar(66, 66, 66);
 	bloaded = !_net.empty();
 	return bloaded;
 }

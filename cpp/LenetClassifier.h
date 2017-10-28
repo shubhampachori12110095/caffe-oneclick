@@ -1,7 +1,7 @@
 #pragma once
 #include "string"
+#include "opencv2/opencv.hpp"
 #include <opencv2/dnn.hpp>
-#include <opencv2/core/utils/trace.hpp>
 using namespace cv::dnn;
 using namespace std;
 const string caffeplatedir = "../";

@@ -11,3 +11,5 @@ clean.bat
 cpp2013
 
 log.txt
+.vs/util/v14/.suo
+.gitignore
